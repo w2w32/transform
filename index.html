@@ -1,0 +1,139 @@
+<!doctype HTML>
+<html>
+<head>
+<title>Linear Transformation</title>
+<script type="text/javascript">
+var can,can1;
+var ctx,ctx1;
+
+var scale=10;
+
+var matrix=[[0,0],[0,0]];
+function rotationMatrix(a){
+matrix=[[Math.cos(a),-Math.sin(a)],[Math.sin(a),Math.cos(a)]];
+}
+
+function transform(x,y){
+	return [matrix[0][0]*x+matrix[0][1]*y,matrix[1][0]*x+matrix[1][1]*y]
+}
+function coordToCanvas(x,y){
+	return [can.width/2+x,can.width/2-y];
+}
+function canvasToCoord(x,y){
+	return [x-can.width/2,can.width/2-y];
+}
+function canvasTransform(x,y){
+	return coordToCanvas.apply(this,transform.apply(this,canvasToCoord(x,y)))
+}
+function quadRoots(a,b,c){
+	return [(-b+(Math.sqrt(b*b-4*a*c)))/(2*a),(-b-(Math.sqrt(b*b-4*a*c)))/(2*a)];
+}
+function eigen(){
+	var values=quadRoots(1,-matrix[0][0]-matrix[1][1],matrix[0][0]*matrix[1][1]-matrix[0][1]*matrix[1][0]);
+	ctx1.strokeStyle="#f00";
+	
+	ctx1.lineWidth=2;
+	ctx1.beginPath();
+
+	for(var i=0;i<2;i++){
+		console.log(values[i]-matrix[0][0],matrix[0][1]);
+		ctx1.moveTo.apply(ctx1,coordToCanvas(100*matrix[0][1],100*(values[i]-matrix[0][0])));
+		ctx1.lineTo.apply(ctx1,coordToCanvas(-100*matrix[0][1],100*(matrix[0][0]-values[i])));
+		ctx1.stroke();
+		
+	}
+}
+
+function updateMatrix(){
+	for(var i=0;i<2;i++){
+		for(var j=0;j<2;j++){
+			matrix[i][j]=parseFloat(document.getElementById("m"+i+j).value);
+		}
+	}
+}
+
+function draw(){
+updateMatrix()
+ctx.clearRect(0,0,can.width,can.height);
+ctx1.clearRect(0,0,can.width,can.height);
+
+for(var j=0;j<can.height;j+=scale){
+	for(var i=0;i<can.width;i+=scale){
+		ctx.strokeStyle="rgb(128,"+Math.floor(i*0.64)+","+Math.floor(j*0.64)+")";
+		ctx.beginPath();
+		ctx.moveTo(i,j);
+		ctx.lineTo.apply(ctx,coordToCanvas.apply(this,transform.apply(this,canvasToCoord(i,j))));
+		ctx.stroke();
+		ctx.closePath();
+	}
+}
+eigen();
+}
+function updateEigen(){
+if(document.getElementById("eig").checked){
+	can1.style.display="block";
+}else{
+	can1.style.display="none";
+}
+}
+function init(){
+	can=document.getElementById("can0");
+	ctx=can.getContext("2d");
+	can1=document.getElementById("can1");
+	ctx1=can1.getContext("2d");
+	updateMatrix()
+}
+</script>
+<style>
+input{
+width:2.5em;
+}
+#can0{
+z-index:0;
+background-color:black;
+position:absolute;
+}
+#can1{
+z-index:1;
+position:absolute;
+display:none;
+}
+#c{
+height:400px;
+width:400px;
+}
+.button{
+font-family:verdana, sans-serif;
+padding-top:8px;
+height:32px;
+width:400px;
+background-color: #6fc;
+text-align: center;
+border: 1px solid #00f;
+border-radius: 4px;
+margin-bottom:8px;
+
+}
+</style>
+</head>
+<body bgcolor="grey" onload="init()">
+<div id="input">
+<table>
+<tr>
+<td><input type="text" id="m00" value="4" maxlength="4"></td>
+<td><input type="text" id="m01" value="3" maxlength="4"></td>
+</tr><tr>
+<td><input type="text" id="m10" value="2" maxlength="4"></td>
+<td><input type="text" id="m11" value="-1" maxlength="4"></td>
+</tr>
+</table>
+Show Eigenvectors: <input type="checkbox" id="eig" onchange="updateEigen()"></input>
+<div class="button" onclick="draw()">Draw Linear Map</div>
+</div>
+<div id="c">
+<canvas height="400" width="400" id="can0"></canvas>
+<canvas height="400" width="400" id="can1"></canvas>
+</div>
+
+</body>
+</html>
