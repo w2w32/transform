@@ -47,7 +47,7 @@ function eigen(){
 function updateMatrix(){
 	for(var i=0;i<2;i++){
 		for(var j=0;j<2;j++){
-			matrix[i][j]=parseFloat(document.getElementById("m"+i+j).value);
+			matrix[i][j]=eval(document.getElementById("m"+i+j).value);
 		}
 	}
 }
