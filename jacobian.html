@@ -1,4 +1,3 @@
-
 <!doctype HTML>
 <html>
 <head>
@@ -7,6 +6,10 @@
 </head>
 <body bgcolor="#222222" onload="init()">
 <table>
+<tr>
+<td>Parent Element</td>
+<td>Actual Element</td>
+</tr>
 <tr>
 <td><canvas height="400" width="400" id="can0" onclick=""></canvas></td>
 <td><canvas height="400" width="400" id="can1" onclick=""></canvas></td>
@@ -17,7 +20,7 @@
 <br>
 Det J: <span id="disp5"></span><br>
 <br>
-Input points: <br>
+Node global coordinates: <br>
 1 - <input type="text" size="6" id="inputx1" value="0">
 <input type="text" size="6" id="inputy1" value="0">
 <br>
@@ -37,7 +40,8 @@ var ctx0, ctx1;
 var key={up:false,down:false,left:false,right:false,space:false,shift:false,a:false,s:false,w:false,z:false};
 
 var scale;
-var MX,MY;
+var MX=200;
+var MY=200;
 
 function init(){
 	can0=document.getElementById("can0");
@@ -46,6 +50,7 @@ function init(){
 	ctx1=can1.getContext("2d");
 	can0.addEventListener("mousemove",function(){var e=window.event ? window.event:e;MX=(e.offsetX);MY=(e.offsetY);draw();});
 	updateInputs();
+	draw();
 }
 
 var r1,g1,b1,r2,g2,b2;
